@@ -32,7 +32,11 @@ M.mason = {
     "html-lsp",
     "typescript-language-server",
     "deno",
-    "prettier"
+    "prettier",
+
+    -- c/cpp stuff
+    "clangd",
+    "clang-format",
   },
 }
 
