@@ -14,6 +14,6 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 -- Auto resize panes when resizing nvim window
 -- autocmd("VimResized", {
---   pattern = "*",
---   command = "tabdo wincmd =",
+  -- pattern = "*",
+  -- command = "tabdo wincmd =",
 -- })

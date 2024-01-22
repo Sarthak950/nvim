@@ -4,7 +4,7 @@ local capabilities = require("plugins.configs.lspconfig").capabilities
 local lspconfig = require "lspconfig"
 
 -- if you just want default config for the servers then put them in a table
-local servers = { "html", "cssls", "tsserver", "clangd", "vtsls", "glint", "eslint"}
+local servers = {"clangd", "html", "cssls", "tsserver", "clangd", "vtsls", "glint", "eslint", "tsserver", "pyright" }
 
 for _, lsp in ipairs(servers) do
     lspconfig[lsp].setup {
@@ -20,7 +20,7 @@ local cmp_nvim_lsp = require "cmp_nvim_lsp"
 
 lspconfig.clangd.setup {
     on_attach = on_attach,
-    filetypes = { "c", "cpp", "objc", "objcpp", "" },
+    filetypes = { "c", "cpp", "objc", "objcpp", "c++" },
     single_file_support = true,
     capabilities = cmp_nvim_lsp.default_capabilities(),
     cmd = {
@@ -28,6 +28,9 @@ lspconfig.clangd.setup {
         "--offset-encoding=utf-16",
     },
 }
+
+
+
 lspconfig.cssls.setup{
     filetypes = {"css", "scss"},
     on_attach = on_attach,
@@ -37,6 +40,7 @@ lspconfig.cssls.setup{
 
 lspconfig.eslint.setup {
     on_attach = on_attach,
+    capabilities = capabilities,
     filetypes = {
         "js",
         "ts",
@@ -123,5 +127,90 @@ lspconfig.eslint.setup {
     },
 }
 
--- 
--- lspconfig.pyright.setup { blabla}
+local function organize_imports()
+    local params = {
+        command = "_typescript.organizeImports",
+        arguments = {vim.api.nvim_buf_get_name(0)},
+    }
+    vim.lsp.buf.execute_command(params)
+end
+
+
+lspconfig.tsserver.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    init_options = {
+        preferences = {
+            disableSuggestions = true,
+        }
+    },
+    commands = {
+        OrganizeImports = {
+            organize_imports,
+            description = "Organize Imports"
+        }
+    }
+}
+
+lspconfig.pyright.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+        python = {
+            analysis = {
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = "workspace",
+                typeCheckingMode = "basic",
+                stubPath = vim.fn.expand "~/.config/nvim/stubs",
+                diagnosticSeverityOverrides = {
+                    reportMissingImports = "none",
+                },
+            },
+        },
+    },
+}
+
+lspconfig.tailwindcss.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    filetypes = {
+        "html",
+        "css",
+        "scss",
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "svelte",
+        "vue",
+        "twig",
+        "markdown",
+        "mdx",
+    },
+    init_options = {
+        userLanguages = {
+            svelte = "html",
+            vue = "html",
+            twig = "html",
+        },
+    },
+}
+
+
+
+-- lspconfig.htmx.setup {
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--     init_options = {
+--         preferences = {
+--             disableSuggestions = true,
+--         }
+--     },
+--     commands = {
+--         OrganizeImports = {
+--             organize_imports,
+--             description = "Organize Imports"
+--         }
+--     }
+-- }
